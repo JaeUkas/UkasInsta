@@ -26,7 +26,9 @@ class LoginActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance();
         email_login_button.setOnClickListener {
-            signinAndSignup()
+            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "")
+                Toast.makeText(this,"이메일과 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show()
+            else signinAndSignup()
         }
         google_login_button.setOnClickListener {
             googleLogin()
@@ -77,9 +79,9 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     //Creating a user account
                     moveMainPage(task.result?.user)
-                } else if (task.exception?.message.isNullOrEmpty()) {
+                } else if (!task.exception?.message.isNullOrEmpty()) {
                     //error message
-                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"올바른 형식의 이메일 또는 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_LONG).show()
                 } else {
                     //Login
                     signinEmail()
@@ -98,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
                     moveMainPage(task.result?.user)
                 } else {
                     //error message
-                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "가입하지 않은 아이디이거나, 잘못된 비밀번호입니다.", Toast.LENGTH_LONG).show()
                 }
             }
 

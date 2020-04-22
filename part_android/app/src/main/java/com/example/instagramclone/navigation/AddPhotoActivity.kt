@@ -23,9 +23,18 @@ class AddPhotoActivity : AppCompatActivity() {
         Toast.makeText(this, "ddd", Toast.LENGTH_LONG).show()
         storage = FirebaseStorage.getInstance()
 
+        Intent(Intent.ACTION_PICK).run {
+            
+            type = "image/*"
+            startActivityForResult(this, PICK_IMAGE_FROM_ALBUM)
+        }
+
+        /*
         var photoPickerIntent = Intent(Intent.ACTION_PICK)
         photoPickerIntent.type = "image/*"
         startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+        */
+         */
 
         addPhoto_btn_upload.setOnClickListener {
             contentUpload()
