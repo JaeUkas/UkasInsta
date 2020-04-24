@@ -9,11 +9,12 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar1"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="40dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            >
 
             <ImageView
                 android:layout_width="match_parent"
@@ -26,6 +27,7 @@
         android:id="@+id/toolbar_division"
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_below="@id/toolbar1"
         android:orientation="horizontal"></LinearLayout>
     <FrameLayout
         android:id="@+id/main_content"

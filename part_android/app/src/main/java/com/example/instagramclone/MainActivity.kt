@@ -25,6 +25,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
+
+        bottom_navigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
