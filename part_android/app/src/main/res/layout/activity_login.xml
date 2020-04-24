@@ -46,13 +46,15 @@
             android:inputType="textPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
+            android:hint="Password(6자리 이상)"
             android:textSize="20dp"
             ></EditText>
     </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/email_signin_button"
+            android:background="#800095F6"
+            android:textColor="#FFFFFF"
             android:text="SIGNIN BY EMAIL"
             android:textSize="20dp"
             android:layout_width="match_parent"
@@ -61,9 +63,12 @@
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:layout_marginBottom="1dp"
+            android:enabled="false"
             ></Button>
         <Button
             android:text="SIGNIN BY FACEBOOK"
+            android:background="#FFFFFF"
+            android:textColor="#385185"
             android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -74,6 +79,8 @@
             ></Button>
         <Button
             android:id="@+id/google_login_button"
+            android:background="#FFFFFF"
+            android:textColor="#D93025"
             android:text="SIGNIN BY GOOGLE"
             android:textSize="20dp"
             android:layout_width="match_parent"
@@ -85,6 +92,8 @@
             ></Button>
         <Button
             android:id="@+id/email_signup_button"
+            android:background="#0095F6"
+            android:textColor="#FFFFFF"
             android:text="SIGNUP BY EMAIL"
             android:textSize="20dp"
             android:layout_width="match_parent"

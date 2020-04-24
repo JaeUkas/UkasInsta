@@ -3,6 +3,9 @@ package com.example.instagramclone
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
 import android.widget.Toast
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -19,6 +22,7 @@ class LoginActivity : AppCompatActivity() {
     var firebaseAuth: FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 9001
+    val regex = Regex( "[0-9a-zA-Z-_]([.]?[0-9a-zA-Z-_])*@[0-9a-zA-Z]+.[a-zA-Z]{2,3}")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,16 +30,59 @@ class LoginActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+
+        email_edittext.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != ""){
+                    email_signin_button.setBackgroundResource(R.color.email_signin_button_color)
+                    email_signin_button.isEnabled = true
+                }
+                else{
+                    email_signin_button.setBackgroundResource(R.color.disable_email_signin_button_color)
+                    email_signin_button.isEnabled = false
+                }
+            }
+        })
+
+         password_edittext.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != ""){
+                    email_signin_button.setBackgroundResource(R.color.email_signin_button_color)
+                    email_signin_button.isEnabled = true
+                }
+                else{
+                    email_signin_button.setBackgroundResource(R.color.disable_email_signin_button_color)
+                    email_signin_button.isEnabled = false
+                }
+            }
+        })
+
         email_signup_button.setOnClickListener {
-            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "" || password_edittext.text.toString().length < 6)
-                Toast.makeText(this,"올바른 형식의 이메일과 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_SHORT).show()
+            if(!regex.matches(email_edittext.text.toString()))
+                Toast.makeText(this,"올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
             else signupByEmail()
         }
 
 
         email_signin_button.setOnClickListener {
-            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "" || password_edittext.text.toString().length < 6)
-                Toast.makeText(this,"올바른 형식의 이메일과 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_SHORT).show()
+            if(!regex.matches(email_edittext.text.toString()))
+                Toast.makeText(this,"올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
             else signinByEmail()
         }
         google_login_button.setOnClickListener {
@@ -117,4 +164,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
+
+
 
