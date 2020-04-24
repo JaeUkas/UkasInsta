@@ -7,8 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.example.instagramclone.R
+import com.example.instagramclone.navigation.model.ContentDTO
+import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,14 +22,19 @@ class AddPhotoActivity : AppCompatActivity() {
     var PICK_IMAGE_FROM_ALBUM = 1
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
+    var auth : FirebaseAuth? = null
+    var firestore : FirebaseFirestore? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_photo)
-        Toast.makeText(this, "ddd", Toast.LENGTH_LONG).show()
+
         storage = FirebaseStorage.getInstance()
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         Intent(Intent.ACTION_PICK).run {
-            
+
             type = "image/*"
             startActivityForResult(this, PICK_IMAGE_FROM_ALBUM)
         }
@@ -60,8 +70,36 @@ class AddPhotoActivity : AppCompatActivity() {
 
         var storageRef = storage?.reference?.child("images")?.child(imageFileName)
 
+        //구글에서 권장하는 Promise 방식
+        storageRef?.putFile(photoUri!!)?.continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
+            return@continueWithTask storageRef.downloadUrl
+        }?.addOnSuccessListener { uri ->
+            var contentDTO = ContentDTO()
+
+            contentDTO.imageUrl = uri.toString()
+            contentDTO.uid = auth?.currentUser?.uid
+            contentDTO.userId = auth?.currentUser?.email
+            contentDTO.explain = addPhoto_edit_explain.text.toString()
+            contentDTO.timestamp = System.currentTimeMillis()
+            firestore?.collection("images")?.document()?.set(contentDTO)
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
+        /*
         storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
             Toast.makeText(this, "upload success", Toast.LENGTH_LONG).show()
-        }
+            storageRef.downloadUrl.addOnSuccessListener { uri ->
+                var contentDTO = ContentDTO()
+
+                contentDTO.imageUrl = uri.toString()
+                contentDTO.uid = auth?.currentUser?.uid
+                contentDTO.userId = auth?.currentUser?.email
+                contentDTO.explain = addPhoto_edit_explain.text.toString()
+                contentDTO.timestamp = System.currentTimeMillis()
+                firestore?.collection("images")?.document()?.set(contentDTO)
+                setResult(Activity.RESULT_OK)
+                finish()
+            }
+        }*/
     }
 }
