@@ -25,10 +25,18 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         firebaseAuth = FirebaseAuth.getInstance();
-        email_login_button.setOnClickListener {
-            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "")
-                Toast.makeText(this,"이메일과 비밀번호를 입력해주세요", Toast.LENGTH_SHORT).show()
-            else signinAndSignup()
+
+        email_signup_button.setOnClickListener {
+            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "" || password_edittext.text.toString().length < 6)
+                Toast.makeText(this,"올바른 형식의 이메일과 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_SHORT).show()
+            else signupByEmail()
+        }
+
+
+        email_signin_button.setOnClickListener {
+            if(email_edittext.text.toString() == "" || password_edittext.text.toString() == "" || password_edittext.text.toString().length < 6)
+                Toast.makeText(this,"올바른 형식의 이메일과 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_SHORT).show()
+            else signinByEmail()
         }
         google_login_button.setOnClickListener {
             googleLogin()
@@ -70,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
-    fun signinAndSignup() {
+    fun signupByEmail() {
         firebaseAuth?.createUserWithEmailAndPassword(
             email_edittext.text.toString(),
             password_edittext.text.toString()
@@ -79,17 +87,14 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     //Creating a user account
                     moveMainPage(task.result?.user)
-                } else if (!task.exception?.message.isNullOrEmpty()) {
-                    //error message
-                    Toast.makeText(this,"올바른 형식의 이메일 또는 비밀번호 6자리 이상 입력해주세요", Toast.LENGTH_LONG).show()
                 } else {
-                    //Login
-                    signinEmail()
+                    //error message
+                    Toast.makeText(this,"사용할 수 없는 아이디입니다. 다른 아이디를 사용하세요.", Toast.LENGTH_LONG).show()
                 }
             }
     }
 
-    fun signinEmail() {
+    fun signinByEmail() {
         firebaseAuth?.signInWithEmailAndPassword(
             email_edittext.text.toString(),
             password_edittext.text.toString()

@@ -52,8 +52,8 @@
     </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/email_login_button"
-            android:text="signin or signup by email"
+            android:id="@+id/email_signin_button"
+            android:text="SIGNIN BY EMAIL"
             android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -63,7 +63,7 @@
             android:layout_marginBottom="1dp"
             ></Button>
         <Button
-            android:text="Facebook_Login"
+            android:text="SIGNIN BY FACEBOOK"
             android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -74,14 +74,25 @@
             ></Button>
         <Button
             android:id="@+id/google_login_button"
-            android:text="Google_Login"
+            android:text="SIGNIN BY GOOGLE"
             android:textSize="20dp"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="1dp"
+            ></Button>
+        <Button
+            android:id="@+id/email_signup_button"
+            android:text="SIGNUP BY EMAIL"
+            android:textSize="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginBottom="80dp"
             ></Button>
 
 
