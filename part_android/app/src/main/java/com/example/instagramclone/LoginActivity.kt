@@ -22,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
     var firebaseAuth: FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 9001
-    val regex = Regex( "[0-9a-zA-Z-_]([.]?[0-9a-zA-Z-_])*@[0-9a-zA-Z]+.[a-zA-Z]{2,3}")
+    val regex = Regex( "[0-9a-zA-Z-_]([.]?[0-9a-zA-Z-_])*@[0-9a-zA-Z]+[.][a-zA-Z]{2,3}")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
