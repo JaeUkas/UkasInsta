@@ -95,7 +95,7 @@ class DetailViewFragment : Fragment() {
         fun favoriteEvent(position: Int) {
             var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
             firestore?.runTransaction { transaction ->
-              
+
                 var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
 
                 if (contentDTO!!.favorites.containsKey(uid)) {
