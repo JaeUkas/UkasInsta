@@ -45,7 +45,7 @@ class UserFragment : Fragment() {
         var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
 
         init {
-            firestore?.collection("images")?.whereEqualTo("uid", uid)
+            firestore?.collection("images")?.whereEqualTo("uid", uid)?.orderBy("timestamp")
                 ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     if (querySnapshot == null) return@addSnapshotListener
 
@@ -75,7 +75,7 @@ class UserFragment : Fragment() {
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var imageview = (holder as CustomViewHolder).imageview
-            Glide.with(holder.imageview.context).load(contentDTOs[position].imageUrl)
+            Glide.with(holder.imageview.context).load(contentDTOs[itemCount-position-1].imageUrl)
                 .apply(RequestOptions().centerCrop()).into(imageview)
         } // center crop : 이미지 중앙으로 받도록
 
