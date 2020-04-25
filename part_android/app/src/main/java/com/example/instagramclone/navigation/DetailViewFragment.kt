@@ -27,7 +27,12 @@ class DetailViewFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         uid = FirebaseAuth.getInstance().currentUser?.uid
         view.detailviewfragment_recyclerview.adapter = DetailViewRecyclerViewAdapter()
-        view.detailviewfragment_recyclerview.layoutManager = LinearLayoutManager(activity)
+
+        var mLayoutManager = LinearLayoutManager(activity)
+        mLayoutManager.reverseLayout = true
+        mLayoutManager.stackFromEnd = true
+        view.detailviewfragment_recyclerview.layoutManager = mLayoutManager
+
 
         return view
     }
@@ -46,8 +51,8 @@ class DetailViewFragment : Fragment() {
                         var item = snapshot.toObject(ContentDTO::class.java)
                         contentDTOs.add(item!!)
                         contentUidList.add(snapshot.id)
-                        notifyDataSetChanged()
                     }
+                    notifyDataSetChanged()
                 }
         }
 
@@ -69,24 +74,24 @@ class DetailViewFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             //서버에서 넘어온 정보를 매핑시켜주는 부분
             var viewHolder = (holder as CustomViewHolder).itemView
-            viewHolder.detailviewitem_profile_textview.text = contentDTOs!![itemCount-position-1].userId
+            viewHolder.detailviewitem_profile_textview.text = contentDTOs!![position].userId
 
-            Glide.with(holder.itemView.context).load(contentDTOs[itemCount-position-1].imageUrl)
+            Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(viewHolder.detailviewitem_imageview_content)
 
-            viewHolder.detailviewitem_explain_textview.text = contentDTOs[itemCount-position-1].explain
+            viewHolder.detailviewitem_explain_textview.text = contentDTOs[position].explain
 
             viewHolder.detailviewitem_favoritecounter_textview.text =
-                "Likes " + contentDTOs!![itemCount-position-1].favoriteCount
+                "Likes " + contentDTOs!![position].favoriteCount
 
-            Glide.with(holder.itemView.context).load(contentDTOs[itemCount-position-1].imageUrl)
+            Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(viewHolder.detailviewitem_profile_image)
 
             viewHolder.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
             }
 
-            if (contentDTOs!![itemCount-position-1].favorites.containsKey(uid)) {
+            if (contentDTOs!![position].favorites.containsKey(uid)) {
                 viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite)
             } else {
                 viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
@@ -94,7 +99,7 @@ class DetailViewFragment : Fragment() {
         }
 
         fun favoriteEvent(position: Int) {
-            var tsDoc = firestore?.collection("images")?.document(contentUidList[itemCount-position-1])
+            var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
             firestore?.runTransaction { transaction ->
 
                 var contentDTO = transaction.get(tsDoc!!).toObject(ContentDTO::class.java)
