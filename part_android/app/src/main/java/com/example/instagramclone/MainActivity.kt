@@ -28,6 +28,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         )
 
         bottom_navigation.selectedItemId = R.id.action_home
+
+
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
@@ -66,7 +68,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         startActivity(Intent(this, AddPhotoActivity::class.java))
                     }
                 }
-                return true
+                return false
             }
             R.id.action_favorite_alarm -> {
                 var alarmFragment = AlarmFragment()

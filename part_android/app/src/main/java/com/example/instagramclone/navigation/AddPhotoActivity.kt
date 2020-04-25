@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.SystemClock
 import android.widget.Toast
+import com.example.instagramclone.MainActivity
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.ContentDTO
 import com.google.android.gms.tasks.Task
