@@ -3,11 +3,14 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item> <!--타이틀바(앱이름 나오는) -->
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item> <!--상태바 ( 시간이랑 와이파이 보여주는) -->
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item> <!--상태바 반투명-->
+        <item name="android:fitsSystemWindows">true</item> <!--상태바 아래부터 레이아웃나오게-->
+
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
