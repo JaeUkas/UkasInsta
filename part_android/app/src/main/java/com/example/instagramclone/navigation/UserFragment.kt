@@ -1,5 +1,6 @@
 package com.example.instagramclone.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.instagramclone.LoginActivity
+import com.example.instagramclone.MainActivity
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 
 class UserFragment : Fragment() {
@@ -22,6 +26,8 @@ class UserFragment : Fragment() {
     var firestore: FirebaseFirestore? = null
     var uid: String? = null
     var auth: FirebaseAuth? = null
+    var currentUserUid : String? = null
+
     override fun onCreateView(
 
         inflater: LayoutInflater,
@@ -34,7 +40,27 @@ class UserFragment : Fragment() {
         uid = arguments?.getString("destinationUid")
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+        currentUserUid = auth?.currentUser?.uid
 
+        if(uid == currentUserUid){
+            //내 페이지
+            fragmentView?.account_btn_follow_signout?.text = "Signout"
+            fragmentView?.account_btn_follow_signout?.setOnClickListener {
+                activity?.finish()
+                startActivity(Intent(activity, LoginActivity::class.java))
+                auth?.signOut()
+            }
+        }else{
+            //다른유저 페이지
+            var mainactivity = (activity as MainActivity)
+            mainactivity?.toolbar_username?.text = arguments?.getString("userId")
+            mainactivity?.toolbar_btn_back?.setOnClickListener {
+                mainactivity.bottom_navigation.selectedItemId = R.id.action_home
+            }
+            mainactivity?.toolbar_title_image?.visibility = View.GONE
+            mainactivity?.toolbar_username?.visibility = View.VISIBLE
+            mainactivity?.toolbar_btn_back?.visibility = View.VISIBLE
+        }
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!, 3)
 
