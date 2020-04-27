@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         )
 
         bottom_navigation.selectedItemId = R.id.action_home
-        registerPushToken()
+       // registerPushToken()
 
     }
 
@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         toolbar_title_image.visibility = View.VISIBLE
     }
 
-    fun registerPushToken() {
+   /* fun registerPushToken() {
         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
             val token = task.result?.token
             val uid = FirebaseAuth.getInstance().currentUser?.uid
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
 
         }
-    }
+    }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
