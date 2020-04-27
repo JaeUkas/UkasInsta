@@ -29,19 +29,32 @@
         android:id="@+id/comment_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"></androidx.recyclerview.widget.RecyclerView>
+    <ImageView
+        android:id="@+id/comment_imageview_profile"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/comment_recyclerview"
+        android:src="@drawable/ic_account"></ImageView>
     <Button
         android:id="@+id/comment_btn_send"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/comment_recyclerview"
         android:layout_margin="10dp"
-        android:text="SEND"
+        android:text="게시"
+        android:textColor="@color/white"
+        android:background="@color/disable_email_signin_button_color"
+        android:enabled="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></Button>
     <EditText
         android:id="@+id/comment_edit_message"
         android:layout_toLeftOf="@+id/comment_btn_send"
+        android:layout_toRightOf="@id/comment_imageview_profile"
         android:layout_below="@+id/comment_recyclerview"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></EditText>
+        android:layout_height="wrap_content"
+        android:hint="댓글 달기..."></EditText>
 </RelativeLayout>

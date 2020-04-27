@@ -83,10 +83,22 @@ class DetailViewFragment : Fragment() {
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(viewHolder.detailviewitem_imageview_content)
 
-            viewHolder.detailviewitem_explain_textview.text = contentDTOs[position].explain
+            if(contentDTOs[position].explain!!.isNotEmpty()){
+                viewHolder.detailviewitem_explain_textview.visibility = View.VISIBLE
+                viewHolder.detailviewitem_explain_textview.text = contentDTOs[position].userId + " " + contentDTOs[position].explain
+            } else{
+                viewHolder.detailviewitem_explain_textview.visibility = View.GONE
+            }
 
-            viewHolder.detailviewitem_favoritecounter_textview.text =
-                "Likes " + contentDTOs!![position].favoriteCount
+            if(contentDTOs[position].favoriteCount == 0) {
+                viewHolder.detailviewitem_favoritecounter_textview.visibility = View.GONE
+            }else{
+                viewHolder.detailviewitem_favoritecounter_textview.visibility = View.VISIBLE
+                viewHolder.detailviewitem_favoritecounter_textview.text =
+                    "Likes " + contentDTOs!![position].favoriteCount
+
+            }
+
 
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(viewHolder.detailviewitem_profile_image)

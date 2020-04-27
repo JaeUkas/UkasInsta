@@ -2,6 +2,8 @@ package com.example.instagramclone.navigation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,15 +23,38 @@ import kotlinx.android.synthetic.main.item_comment.view.*
 class CommentActivity : AppCompatActivity() {
     var contentUid: String? = null
     var destinationUid: String? = null
+    var uid : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
 
+        uid = FirebaseAuth.getInstance().currentUser?.uid
+
         contentUid = intent.getStringExtra("contentUid")
         destinationUid = intent.getStringExtra("destinationUid")
         comment_recyclerview.adapter = CommentRecyclerviewAdapter()
         comment_recyclerview.layoutManager = LinearLayoutManager(this)
+
+        comment_edit_message.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if (comment_edit_message.text.toString().isNotEmpty()) {
+                    comment_btn_send.setBackgroundResource(R.color.email_signin_button_color)
+                    comment_btn_send.isEnabled = true
+                } else {
+                    comment_btn_send.setBackgroundResource(R.color.disable_email_signin_button_color)
+                    comment_btn_send.isEnabled = false
+                }
+            }
+        })
 
         comment_btn_send.setOnClickListener {
             var comment = ContentDTO.Comment()
@@ -44,6 +69,20 @@ class CommentActivity : AppCompatActivity() {
             commentAlarm(destinationUid!!, comment_edit_message.text.toString())
             comment_edit_message.setText("")
         }
+        getProfileImage()
+    }
+
+    fun getProfileImage() {
+        FirebaseFirestore.getInstance()?.collection("profileImages")?.document(uid!!)
+            ?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
+                if (documentSnapshot == null) return@addSnapshotListener
+
+                if (documentSnapshot.data != null) {
+                    var url = documentSnapshot?.data!!["image"]
+                    Glide.with(this).load(url).apply(RequestOptions().circleCrop())
+                        .into(this?.comment_imageview_profile!!)
+                }
+            }
     }
 
     fun commentAlarm(destinationUid: String, message: String) {
