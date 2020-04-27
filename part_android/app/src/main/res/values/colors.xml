@@ -7,4 +7,5 @@
     <color name="email_signin_button_color">#0095F6</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
+    <color name="FollowCancel">#e3e3e3</color>
 </resources>

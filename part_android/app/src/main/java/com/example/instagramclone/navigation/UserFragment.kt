@@ -1,6 +1,7 @@
 package com.example.instagramclone.navigation
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.ColorFilter
@@ -107,8 +108,12 @@ class UserFragment : Fragment() {
                     } else {
                         if (uid != currentUserUid) {
                             fragmentView?.account_btn_follow_signout?.text = "FOLLOW"
+
                             fragmentView?.account_btn_follow_signout?.background?.setColorFilter(
-                                ContextCompat.getColor(activity!!, R.color.email_signin_button_color),
+                                ContextCompat.getColor(
+                                    activity!!,
+                                    R.color.email_signin_button_color
+                                ),
                                 PorterDuff.Mode.MULTIPLY
                             )
                         }
@@ -187,8 +192,10 @@ class UserFragment : Fragment() {
                     Glide
                         .with(fragmentView!!)
                         .load(url)
-                        .apply(RequestOptions()
-                            .circleCrop())
+                        .apply(
+                            RequestOptions()
+                                .circleCrop()
+                        )
                         .into(fragmentView?.account_iv_profile!!)
                 }
             }

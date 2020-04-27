@@ -1,7 +1,10 @@
 package com.example.instagramclone.navigation
 
 import android.content.Intent
+import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,19 +88,28 @@ class DetailViewFragment : Fragment() {
             Glide.with(holder.itemView.context).load(contentDTOs[position].imageUrl)
                 .into(viewHolder.detailviewitem_imageview_content)
 
-            if(contentDTOs[position].explain!!.isNotEmpty()){
+            if (contentDTOs[position].explain!!.isNotEmpty()) {
                 viewHolder.detailviewitem_explain_textview.visibility = View.VISIBLE
-                viewHolder.detailviewitem_explain_textview.text = contentDTOs[position].userId + " " + contentDTOs[position].explain
-            } else{
+                val str =
+                    "<b>" + contentDTOs[position].userId + "</b> " + contentDTOs[position].explain
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    viewHolder.detailviewitem_explain_textview.text =
+                        Html.fromHtml(str, Html.FROM_HTML_MODE_LEGACY).toString()
+                } else {
+                    viewHolder.detailviewitem_explain_textview.text = Html.fromHtml(str).toString()
+                }
+
+                viewHolder.detailviewitem_explain_textview.text = Html.fromHtml(str)
+            } else {
                 viewHolder.detailviewitem_explain_textview.visibility = View.GONE
             }
 
-            if(contentDTOs[position].favoriteCount == 0) {
+            if (contentDTOs[position].favoriteCount == 0) {
                 viewHolder.detailviewitem_favoritecounter_textview.visibility = View.GONE
-            }else{
+            } else {
                 viewHolder.detailviewitem_favoritecounter_textview.visibility = View.VISIBLE
                 viewHolder.detailviewitem_favoritecounter_textview.text =
-                    "Likes " + contentDTOs!![position].favoriteCount
+                    "좋아요 " + contentDTOs!![position].favoriteCount + "개"
 
             }
 
@@ -107,7 +119,9 @@ class DetailViewFragment : Fragment() {
 
                     if (documentSnapshot.data != null) {
                         var url = documentSnapshot?.data!!["image"]
-                        Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop()).into(viewHolder.detailviewitem_profile_image)
+                        Glide.with(holder.itemView.context).load(url)
+                            .apply(RequestOptions().circleCrop())
+                            .into(viewHolder.detailviewitem_profile_image)
                     }
                 }
 

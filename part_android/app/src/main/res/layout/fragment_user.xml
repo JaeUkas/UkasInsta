@@ -17,7 +17,8 @@
 
         <Button
             android:id="@+id/account_btn_follow_signout"
-            android:text="follow"
+            android:text="FOLLOW"
+            android:textColor="@color/white"
             android:layout_toRightOf="@+id/account_iv_profile"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
