@@ -1,6 +1,6 @@
 package com.example.instagramclone.navigation.model
 
-data class FollowDTO (
+data class FollowDTO(
     var followerCount: Int = 0,
     var followers: MutableMap<String, Boolean> = HashMap(), // 중복을 방지하기위해
 

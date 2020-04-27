@@ -64,12 +64,12 @@ class AlarmFragment : Fragment() {
             var view = holder.itemView
             FirebaseFirestore.getInstance().collection("profileImages")
                 .document(alarmDTOList[position].uid!!).get().addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val url = task.result!!["image"]
-                    Glide.with(view.context).load(url).apply(RequestOptions().circleCrop())
-                        .into(view.commentviewitem_imageview_profile)
+                    if (task.isSuccessful) {
+                        val url = task.result!!["image"]
+                        Glide.with(view.context).load(url).apply(RequestOptions().circleCrop())
+                            .into(view.commentviewitem_imageview_profile)
+                    }
                 }
-            }
             when (alarmDTOList[position].kind) {
                 0 -> {
                     val str = alarmDTOList[position].userId + "님이 회원님의 게시물을 좋아합니다"

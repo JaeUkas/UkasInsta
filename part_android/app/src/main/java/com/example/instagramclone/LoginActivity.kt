@@ -22,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
     var firebaseAuth: FirebaseAuth? = null
     var googleSignInClient: GoogleSignInClient? = null
     var GOOGLE_LOGIN_CODE = 9001
-    val regex = Regex( "[0-9a-zA-Z-_]([.]?[0-9a-zA-Z-_])*@[0-9a-zA-Z]+[.][a-zA-Z]{2,3}")
+    val regex = Regex("[0-9a-zA-Z-_]([.]?[0-9a-zA-Z-_])*@[0-9a-zA-Z]+[.][a-zA-Z]{2,3}")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
         firebaseAuth = FirebaseAuth.getInstance();
 
 
-        email_edittext.addTextChangedListener(object : TextWatcher{
+        email_edittext.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
             }
@@ -41,18 +41,17 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != ""){
+                if (password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != "") {
                     email_signin_button.setBackgroundResource(R.color.email_signin_button_color)
                     email_signin_button.isEnabled = true
-                }
-                else{
+                } else {
                     email_signin_button.setBackgroundResource(R.color.disable_email_signin_button_color)
                     email_signin_button.isEnabled = false
                 }
             }
         })
 
-         password_edittext.addTextChangedListener(object : TextWatcher{
+        password_edittext.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
             }
@@ -62,11 +61,10 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != ""){
+                if (password_edittext.text.toString().length >= 6 && email_edittext.text.toString() != "") {
                     email_signin_button.setBackgroundResource(R.color.email_signin_button_color)
                     email_signin_button.isEnabled = true
-                }
-                else{
+                } else {
                     email_signin_button.setBackgroundResource(R.color.disable_email_signin_button_color)
                     email_signin_button.isEnabled = false
                 }
@@ -74,15 +72,15 @@ class LoginActivity : AppCompatActivity() {
         })
 
         email_signup_button.setOnClickListener {
-            if(!regex.matches(email_edittext.text.toString()))
-                Toast.makeText(this,"올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
+            if (!regex.matches(email_edittext.text.toString()))
+                Toast.makeText(this, "올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
             else signupByEmail()
         }
 
 
         email_signin_button.setOnClickListener {
-            if(!regex.matches(email_edittext.text.toString()))
-                Toast.makeText(this,"올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
+            if (!regex.matches(email_edittext.text.toString()))
+                Toast.makeText(this, "올바른 형식의 이메일을 입력해주세요", Toast.LENGTH_SHORT).show()
             else signinByEmail()
         }
         google_login_button.setOnClickListener {
@@ -97,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-            moveMainPage(firebaseAuth?.currentUser)
+        moveMainPage(firebaseAuth?.currentUser)
     }
 
     fun googleLogin() {
@@ -141,7 +139,8 @@ class LoginActivity : AppCompatActivity() {
                     moveMainPage(task.result?.user)
                 } else {
                     //error message
-                    Toast.makeText(this,"사용할 수 없는 아이디입니다. 다른 아이디를 사용하세요.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "사용할 수 없는 아이디입니다. 다른 아이디를 사용하세요.", Toast.LENGTH_LONG)
+                        .show()
                 }
             }
     }
