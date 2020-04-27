@@ -25,6 +25,12 @@
         <activity android:name=".navigation.AddPhotoActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/push_icon"></meta-data>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent"></meta-data>
     </application>
 
 </manifest>
