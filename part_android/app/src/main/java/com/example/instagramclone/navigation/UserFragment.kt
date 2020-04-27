@@ -61,6 +61,11 @@ class UserFragment : Fragment() {
                 startActivity(Intent(activity, LoginActivity::class.java))
                 auth?.signOut()
             }
+            fragmentView?.account_iv_profile?.setOnClickListener {
+                var photoPickerIntent = Intent(Intent.ACTION_PICK)
+                photoPickerIntent.type = "image/*"
+                activity?.startActivityForResult(photoPickerIntent, PICK_PROFILE_FROM_ALBUM)
+            }
         } else {
             //다른유저 페이지
             var mainactivity = (activity as MainActivity)
@@ -78,11 +83,6 @@ class UserFragment : Fragment() {
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!, 3)
 
-        fragmentView?.account_iv_profile?.setOnClickListener {
-            var photoPickerIntent = Intent(Intent.ACTION_PICK)
-            photoPickerIntent.type = "image/*"
-            activity?.startActivityForResult(photoPickerIntent, PICK_PROFILE_FROM_ALBUM)
-        }
         getProfileImage()
         getFollwerAndFollowing()
         return fragmentView
@@ -184,7 +184,11 @@ class UserFragment : Fragment() {
 
                 if (documentSnapshot.data != null) {
                     var url = documentSnapshot?.data!!["image"]
-                    Glide.with(activity!!).load(url).apply(RequestOptions().circleCrop())
+                    Glide
+                        .with(fragmentView!!)
+                        .load(url)
+                        .apply(RequestOptions()
+                            .circleCrop())
                         .into(fragmentView?.account_iv_profile!!)
                 }
             }
