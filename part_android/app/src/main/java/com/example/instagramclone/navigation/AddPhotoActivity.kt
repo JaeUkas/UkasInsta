@@ -50,6 +50,8 @@ class AddPhotoActivity : AppCompatActivity() {
          */
 
         addPhoto_btn_upload.setOnClickListener {
+            addPhoto_btn_upload.isEnabled = false
+            addPhoto_btn_upload.setBackgroundResource(R.color.disable_email_signin_button_color)
             contentUpload()
         }
     }

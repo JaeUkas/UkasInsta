@@ -48,6 +48,8 @@
 
     <Button
         android:id="@+id/addPhoto_btn_upload"
+        android:background="@color/email_signin_button_color"
+        android:textColor="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/editText"
