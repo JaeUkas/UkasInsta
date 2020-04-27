@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.circleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.example.instagramclone.R
+import com.example.instagramclone.navigation.model.AlarmDTO
 import com.example.instagramclone.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,14 +19,15 @@ import kotlinx.android.synthetic.main.activity_comment.*
 import kotlinx.android.synthetic.main.item_comment.view.*
 
 class CommentActivity : AppCompatActivity() {
+    var contentUid: String? = null
+    var destinationUid: String? = null
 
-    var contentUid : String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
 
         contentUid = intent.getStringExtra("contentUid")
-
+        destinationUid = intent.getStringExtra("destinationUid")
         comment_recyclerview.adapter = CommentRecyclerviewAdapter()
         comment_recyclerview.layoutManager = LinearLayoutManager(this)
 
@@ -36,36 +38,52 @@ class CommentActivity : AppCompatActivity() {
             comment.comment = comment_edit_message.text.toString()
             comment.timestamp = System.currentTimeMillis()
 
-            FirebaseFirestore.getInstance().collection("images").document(contentUid!!).collection("comments").document().set(comment)
+            FirebaseFirestore.getInstance().collection("images").document(contentUid!!)
+                .collection("comments").document().set(comment)
 
+            commentAlarm(destinationUid!!, comment_edit_message.text.toString())
             comment_edit_message.setText("")
         }
     }
-    inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
-        var comments : ArrayList<ContentDTO.Comment> = arrayListOf()
+    fun commentAlarm(destinationUid: String, message: String) {
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+        alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+        alarmDTO.timestamp = System.currentTimeMillis()
+        alarmDTO.message = message
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+    }
+
+    inner class CommentRecyclerviewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+        var comments: ArrayList<ContentDTO.Comment> = arrayListOf()
+
         init {
             FirebaseFirestore.getInstance()
                 .collection("images")
                 .document(contentUid!!)
                 .collection("comments")
                 .orderBy("timestamp")
-                .addSnapshotListener{querySnapshot, firebaseFirestoreException ->
+                .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                     comments.clear()
-                    if(querySnapshot == null) return@addSnapshotListener
+                    if (querySnapshot == null) return@addSnapshotListener
 
-                    for(snapshot in querySnapshot.documents!!){
+                    for (snapshot in querySnapshot.documents!!) {
                         comments.add(snapshot.toObject(ContentDTO.Comment::class.java)!!)
                     }
                     notifyDataSetChanged()
                 }
         }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            var view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
+            var view =
+                LayoutInflater.from(parent.context).inflate(R.layout.item_comment, parent, false)
             return CustomViewholder(view)
         }
 
-        private  inner class CustomViewholder(view : View) : RecyclerView.ViewHolder(view)
+        private inner class CustomViewholder(view: View) : RecyclerView.ViewHolder(view)
 
         override fun getItemCount(): Int {
             return comments.size
@@ -81,12 +99,14 @@ class CommentActivity : AppCompatActivity() {
                 .document(comments[position].uid!!)
                 .get()
                 .addOnCompleteListener { task ->
-                    if(task.isSuccessful){
+                    if (task.isSuccessful) {
                         var url = task.result!!["image"]
-                        Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop()).into(view.commentviewitem_imageview_profile)
+                        Glide.with(holder.itemView.context).load(url)
+                            .apply(RequestOptions().circleCrop())
+                            .into(view.commentviewitem_imageview_profile)
                     }
                 }
-         }
+        }
 
     }
 }
