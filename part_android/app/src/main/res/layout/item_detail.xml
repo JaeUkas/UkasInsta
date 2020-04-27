@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/detailviewitem_profile"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="50dp">
@@ -17,6 +18,7 @@
             android:layout_height="35dp"></ImageView>
         <TextView
             android:text="User name"
+            android:textColor="@color/black"
             android:id="@+id/detailviewitem_profile_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">

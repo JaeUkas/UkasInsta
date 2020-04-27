@@ -135,7 +135,7 @@ class DetailViewFragment : Fragment() {
                 viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
             }
 
-            viewHolder.detailviewitem_profile_image.setOnClickListener {
+            viewHolder.detailviewitem_profile.setOnClickListener {
                 var fragment = UserFragment()
                 var bundle = Bundle()
                 bundle.putString("destinationUid", contentDTOs[position].uid)
