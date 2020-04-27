@@ -103,14 +103,14 @@ class UserFragment : Fragment() {
                         followDTO?.followerCount?.toString()
                     if (followDTO?.followers?.containsKey(currentUserUid!!)) {
                         fragmentView?.account_btn_follow_signout?.text = "FOLLOW CANCEL"
-                        fragmentView?.account_btn_follow_signout?.background?.setColorFilter(
-                            ContextCompat.getColor(activity!!, R.color.email_signin_button_color),
-                            PorterDuff.Mode.MULTIPLY
-                        )
+                        fragmentView?.account_btn_follow_signout?.background?.colorFilter = null
                     } else {
                         if (uid != currentUserUid) {
                             fragmentView?.account_btn_follow_signout?.text = "FOLLOW"
-                            fragmentView?.account_btn_follow_signout?.background?.colorFilter = null
+                            fragmentView?.account_btn_follow_signout?.background?.setColorFilter(
+                                ContextCompat.getColor(activity!!, R.color.email_signin_button_color),
+                                PorterDuff.Mode.MULTIPLY
+                            )
                         }
                     }
                 }

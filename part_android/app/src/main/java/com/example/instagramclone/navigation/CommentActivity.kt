@@ -23,18 +23,21 @@ import kotlinx.android.synthetic.main.item_comment.view.*
 class CommentActivity : AppCompatActivity() {
     var contentUid: String? = null
     var destinationUid: String? = null
-    var uid : String? = null
+    var uid: String? = null
+    var firestore: FirebaseFirestore? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comment)
 
         uid = FirebaseAuth.getInstance().currentUser?.uid
+        firestore = FirebaseFirestore.getInstance()
 
         contentUid = intent.getStringExtra("contentUid")
         destinationUid = intent.getStringExtra("destinationUid")
         comment_recyclerview.adapter = CommentRecyclerviewAdapter()
         comment_recyclerview.layoutManager = LinearLayoutManager(this)
+        comment_edit_message.requestFocus()
 
         comment_edit_message.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -73,7 +76,7 @@ class CommentActivity : AppCompatActivity() {
     }
 
     fun getProfileImage() {
-        FirebaseFirestore.getInstance()?.collection("profileImages")?.document(uid!!)
+        firestore!!.collection("profileImages")?.document(uid!!)
             ?.addSnapshotListener { documentSnapshot, firebaseFirestoreException ->
                 if (documentSnapshot == null) return@addSnapshotListener
 
@@ -101,7 +104,7 @@ class CommentActivity : AppCompatActivity() {
         var comments: ArrayList<ContentDTO.Comment> = arrayListOf()
 
         init {
-            FirebaseFirestore.getInstance()
+            firestore!!
                 .collection("images")
                 .document(contentUid!!)
                 .collection("comments")
@@ -134,16 +137,18 @@ class CommentActivity : AppCompatActivity() {
             view.commentviewitem_textview_comment.text = comments[position].comment
             view.commentviewitem_textview_profile.text = comments[position].userId
 
-            FirebaseFirestore.getInstance()
+            firestore!!
                 .collection("profileImages")
                 .document(comments[position].uid!!)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         var url = task.result!!["image"]
-                        Glide.with(holder.itemView.context).load(url)
-                            .apply(RequestOptions().circleCrop())
-                            .into(view.commentviewitem_imageview_profile)
+                        if(url != null) {
+                            Glide.with(holder.itemView.context).load(url)
+                                .apply(RequestOptions().circleCrop())
+                                .into(view.commentviewitem_imageview_profile)
+                        }
                     }
                 }
         }
