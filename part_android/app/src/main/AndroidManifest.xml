@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".navigation.CommentActivity"></activity>
         <activity
             android:name=".SplashActivity"
             android:theme="@style/SplashTheme">
@@ -23,7 +24,7 @@
         </activity>
         <activity android:name=".navigation.AddPhotoActivity" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
     </application>
 
 </manifest>
