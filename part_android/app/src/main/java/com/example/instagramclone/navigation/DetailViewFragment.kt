@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.AlarmDTO
 import com.example.instagramclone.navigation.model.ContentDTO
+import com.example.instagramclone.selectedItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_comment.*
@@ -40,10 +41,8 @@ class DetailViewFragment : Fragment() {
         mLayoutManager.stackFromEnd = true
         view.detailviewfragment_recyclerview.layoutManager = mLayoutManager
 
-
         return view
     }
-
     inner class DetailViewRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
@@ -143,6 +142,7 @@ class DetailViewFragment : Fragment() {
                 fragment.arguments = bundle
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.main_content, fragment)?.commit()
+                selectedItem = fragment.id
             }
             viewHolder.detailviewitem_comment_imageview.setOnClickListener { v ->
                 var intent = Intent(v.context, CommentActivity::class.java)
@@ -181,4 +181,3 @@ class DetailViewFragment : Fragment() {
         }
     }
 }
-

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,8 +22,9 @@ import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.jar.Manifest
 
-
+var selectedItem: Int = 0
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,23 +39,38 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         )
 
         bottom_navigation.selectedItemId = R.id.action_home
-       // registerPushToken()
+        selectedItem = bottom_navigation.selectedItemId
+        // registerPushToken()
 
+    }
+
+    override fun onBackPressed() {
+        if (selectedItem == R.id.action_home) {
+            moveTaskToBack(true);						// 태스크를 백그라운드로 이동
+            finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+        else bottom_navigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         setToolbarDefault()
+        if (selectedItem == p0.itemId) return false
+        else selectedItem = p0.itemId
         when (p0.itemId) {
             R.id.action_home -> {
                 var detailViewFragment = DetailViewFragment()
+
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, detailViewFragment).commit()
+
                 return true
             }
             R.id.action_search -> {
                 var gridFragment = GridFragment()
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
                     .commit()
+
                 return true
             }
             R.id.action_add_photo -> {
@@ -106,17 +123,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         toolbar_title_image.visibility = View.VISIBLE
     }
 
-   /* fun registerPushToken() {
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
-            val token = task.result?.token
-            val uid = FirebaseAuth.getInstance().currentUser?.uid
-            val map = mutableMapOf<String, Any>()
-            map["pushToken"] = token!!
+    /* fun registerPushToken() {
+         FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener { task ->
+             val token = task.result?.token
+             val uid = FirebaseAuth.getInstance().currentUser?.uid
+             val map = mutableMapOf<String, Any>()
+             map["pushToken"] = token!!
 
-            FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
+             FirebaseFirestore.getInstance().collection("pushtokens").document(uid!!).set(map)
 
-        }
-    }*/
+         }
+     }*/
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
