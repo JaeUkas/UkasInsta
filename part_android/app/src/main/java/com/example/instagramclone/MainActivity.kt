@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import com.example.instagramclone.navigation.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -23,12 +24,19 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.util.jar.Manifest
 
 var selectedItem: Int = 0
+
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+    var detailViewFragment: DetailViewFragment? = null
+    var gridFragment: GridFragment? = null
+    var alarmFragment: AlarmFragment? = null
+    var userFragment: UserFragment? = null
 
-
+    var fragmentManager: FragmentManager? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        fragmentManager = supportFragmentManager
 
         bottom_navigation.setOnNavigationItemSelectedListener(this)
 
@@ -39,6 +47,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         )
 
         bottom_navigation.selectedItemId = R.id.action_home
+
+
         selectedItem = bottom_navigation.selectedItemId
         // registerPushToken()
 
@@ -46,29 +56,46 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onBackPressed() {
         if (selectedItem == R.id.action_home) {
-            moveTaskToBack(true);						// 태스크를 백그라운드로 이동
-            finishAndRemoveTask();						// 액티비티 종료 + 태스크 리스트에서 지우기
+            moveTaskToBack(true);                        // 태스크를 백그라운드로 이동
+            finishAndRemoveTask();                        // 액티비티 종료 + 태스크 리스트에서 지우기
             android.os.Process.killProcess(android.os.Process.myPid());
-        }
-        else bottom_navigation.selectedItemId = R.id.action_home
+        } else bottom_navigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         setToolbarDefault()
-        if (selectedItem == p0.itemId) return false
-        else selectedItem = p0.itemId
+        selectedItem = p0.itemId
         when (p0.itemId) {
             R.id.action_home -> {
-                var detailViewFragment = DetailViewFragment()
-
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_content, detailViewFragment).commit()
+                if (detailViewFragment == null) {
+                    detailViewFragment = DetailViewFragment()
+                    fragmentManager!!.beginTransaction()
+                        .add(R.id.main_content, detailViewFragment!!).commit()
+                }
+                if (gridFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(gridFragment!!).commit()
+                if (alarmFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(alarmFragment!!).commit()
+                if (userFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(userFragment!!).commit()
+                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
+                    .show(detailViewFragment!!).commit()
 
                 return true
             }
             R.id.action_search -> {
-                var gridFragment = GridFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
+                if (gridFragment == null) {
+                    gridFragment = GridFragment()
+                    fragmentManager!!.beginTransaction().add(R.id.main_content, gridFragment!!)
+                        .commit()
+                }
+                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(detailViewFragment!!).commit()
+                if (alarmFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(alarmFragment!!).commit()
+                if (userFragment != null) fragmentManager!!.beginTransaction().hide(userFragment!!)
+                    .commit()
+                if (gridFragment != null) fragmentManager!!.beginTransaction().show(gridFragment!!)
                     .commit()
 
                 return true
@@ -98,19 +125,48 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return false
             }
             R.id.action_favorite_alarm -> {
-                var alarmFragment = AlarmFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, alarmFragment)
-                    .commit()
+                if (alarmFragment == null) {
+                    alarmFragment = AlarmFragment()
+                    fragmentManager!!.beginTransaction().add(R.id.main_content, alarmFragment!!)
+                        .commit()
+                }
+                if (gridFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(gridFragment!!).commit()
+                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(detailViewFragment!!).commit()
+                if (userFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(userFragment!!).commit()
+                if (alarmFragment != null) fragmentManager!!.beginTransaction()
+                    .show(alarmFragment!!).commit()
+
                 return true
             }
             R.id.action_account -> {
-                var userFragment = UserFragment()
-                var bundle = Bundle()
-                var uid = FirebaseAuth.getInstance().currentUser?.uid
-                bundle.putString("destinationUid", uid)
-                userFragment.arguments = bundle
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment)
-                    .commit()
+                if (userFragment == null) {
+                    userFragment = UserFragment()
+                    var bundle = Bundle()
+                    var uid = FirebaseAuth.getInstance().currentUser?.uid
+                    bundle.putString("destinationUid", uid)
+                    userFragment!!.arguments = bundle
+                    fragmentManager!!.beginTransaction().add(R.id.main_content, userFragment!!)
+                        .commit()
+                }
+                if (gridFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(gridFragment!!).commit()
+                if (alarmFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(alarmFragment!!).commit()
+                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
+                    .hide(detailViewFragment!!).commit()
+                if (userFragment != null) fragmentManager!!.beginTransaction()
+                    .show(userFragment!!).commit()
+
+                // var userFragment = UserFragment()
+                // var bundle = Bundle()
+                // var uid = FirebaseAuth.getInstance().currentUser?.uid
+                // bundle.putString("destinationUid", uid)
+                // userFragment.arguments = bundle
+                // supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment)
+                //     .commit()
                 return true
             }
         }

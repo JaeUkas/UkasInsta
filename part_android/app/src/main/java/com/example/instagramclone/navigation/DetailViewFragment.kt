@@ -20,7 +20,9 @@ import com.example.instagramclone.selectedItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_comment.*
+import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.fragment_detail.view.detailviewfragment_swipe
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class DetailViewFragment : Fragment() {
@@ -40,6 +42,11 @@ class DetailViewFragment : Fragment() {
         mLayoutManager.reverseLayout = true
         mLayoutManager.stackFromEnd = true
         view.detailviewfragment_recyclerview.layoutManager = mLayoutManager
+
+        view.detailviewfragment_swipe.setOnRefreshListener {
+           (view.detailviewfragment_recyclerview.adapter as DetailViewRecyclerViewAdapter).notifyDataSetChanged()
+            view.detailviewfragment_swipe.isRefreshing = false
+        }
 
         return view
     }
