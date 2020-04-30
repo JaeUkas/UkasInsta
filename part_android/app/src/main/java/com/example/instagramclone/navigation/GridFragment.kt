@@ -30,6 +30,11 @@ class GridFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         fragmentView?.gridfragment_recyclerview?.adapter = GridFragmentRecyclerViewAdapter()
         fragmentView?.gridfragment_recyclerview?.layoutManager = GridLayoutManager(activity, 3)
+
+        fragmentView?.searchfragment_swipe?.setOnRefreshListener {
+            fragmentView?.searchfragment_swipe?.isRefreshing = false
+        }
+
         return fragmentView
     }
 

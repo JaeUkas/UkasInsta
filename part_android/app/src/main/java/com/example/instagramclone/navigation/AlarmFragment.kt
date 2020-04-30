@@ -28,6 +28,10 @@ class AlarmFragment : Fragment() {
         view.alarmfragment_recyclerview.adapter = AlarmRecyclerviewAdapter()
         view.alarmfragment_recyclerview.layoutManager = LinearLayoutManager(activity)
 
+        view?.alarmfragment_swipe?.setOnRefreshListener {
+            view.alarmfragment_swipe?.isRefreshing = false
+        }
+
         return view
     }
 

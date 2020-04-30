@@ -88,10 +88,10 @@ class UserFragment : Fragment() {
         fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
         fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!, 3)
 
-        fragmentView?.account_swipe?.setOnRefreshListener {
+        fragmentView?.accountfragment_swipe?.setOnRefreshListener {
             fragmentView?.account_recyclerview?.adapter = UserFragmentRecyclerViewAdapter()
             fragmentView?.account_recyclerview?.layoutManager = GridLayoutManager(activity!!, 3)
-            fragmentView?.account_swipe?.isRefreshing = false
+            fragmentView?.accountfragment_swipe?.isRefreshing = false
         }
 
         getProfileImage()

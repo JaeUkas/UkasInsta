@@ -50,8 +50,7 @@ class DetailViewFragment : Fragment() {
         view.detailviewfragment_recyclerview.layoutManager = mLayoutManager
 
         view.detailviewfragment_swipe.setOnRefreshListener {
-            (view.detailviewfragment_recyclerview.adapter as DetailViewRecyclerViewAdapter).notifyDataSetChanged()
-            view.detailviewfragment_swipe.isRefreshing = false
+            view.detailviewfragment_swipe?.isRefreshing = false
         }
 
         return view
