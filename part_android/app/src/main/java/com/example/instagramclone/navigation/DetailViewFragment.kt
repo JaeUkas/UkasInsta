@@ -8,18 +8,24 @@ import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.instagramclone.MainActivity.Companion.accountFragmentList
+import com.example.instagramclone.MainActivity.Companion.alarmFragmentList
+import com.example.instagramclone.MainActivity.Companion.homeFragmentList
+import com.example.instagramclone.MainActivity.Companion.searchFragmentList
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.AlarmDTO
 import com.example.instagramclone.navigation.model.ContentDTO
-import com.example.instagramclone.selectedItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_comment.*
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_alarm.*
 import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.fragment_detail.view.detailviewfragment_swipe
@@ -44,12 +50,13 @@ class DetailViewFragment : Fragment() {
         view.detailviewfragment_recyclerview.layoutManager = mLayoutManager
 
         view.detailviewfragment_swipe.setOnRefreshListener {
-           (view.detailviewfragment_recyclerview.adapter as DetailViewRecyclerViewAdapter).notifyDataSetChanged()
+            (view.detailviewfragment_recyclerview.adapter as DetailViewRecyclerViewAdapter).notifyDataSetChanged()
             view.detailviewfragment_swipe.isRefreshing = false
         }
 
         return view
     }
+
     inner class DetailViewRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
@@ -147,15 +154,71 @@ class DetailViewFragment : Fragment() {
                 bundle.putString("destinationUid", contentDTOs[position].uid)
                 bundle.putString("userId", contentDTOs[position].userId)
                 fragment.arguments = bundle
-                activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.main_content, fragment)?.commit()
-                selectedItem = fragment.id
+
+                changeFragment(fragment)
+                addToList(fragment)
             }
             viewHolder.detailviewitem_comment_imageview.setOnClickListener { v ->
                 var intent = Intent(v.context, CommentActivity::class.java)
                 intent.putExtra("contentUid", contentUidList[position])
                 intent.putExtra("destinationUid", contentDTOs[position].uid)
                 startActivity(intent)
+
+            }
+        }
+
+        fun changeFragment(fragment: Fragment){
+            for (fragment in activity!!.supportFragmentManager.fragments) {
+                if (fragment != null && fragment.isVisible) {
+                    activity?.supportFragmentManager
+                        ?.beginTransaction()
+                        ?.hide(fragment)
+                        ?.commitNow()
+                }
+            }
+            when (activity!!.bottom_navigation.selectedItemId) {
+                R.id.action_home -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        homeFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_search -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        searchFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_alarm -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        alarmFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_account -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        accountFragmentList.size.toString()
+                    )?.commitNow()
+                }
+            }
+        }
+
+
+        fun addToList(fragment: Fragment) {
+            when (activity!!.bottom_navigation.selectedItemId) {
+                R.id.action_home -> {
+                    homeFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_search -> {
+                    searchFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_alarm -> {
+                    alarmFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_account -> {
+                    accountFragmentList.add(fragment.tag!!)
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 package com.example.instagramclone.navigation
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.TransformationUtils.circleCrop
 import com.bumptech.glide.request.RequestOptions
+import com.example.instagramclone.MainActivity
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.AlarmDTO
 import com.example.instagramclone.navigation.model.ContentDTO
@@ -137,6 +139,11 @@ class CommentActivity : AppCompatActivity() {
             view.commentviewitem_textview_comment.text = comments[position].comment
             view.commentviewitem_textview_profile.text = comments[position].userId
 
+            view.commentviewitem_imageview_profile.setOnClickListener {
+
+            }
+
+
             firestore!!
                 .collection("profileImages")
                 .document(comments[position].uid!!)
@@ -151,6 +158,7 @@ class CommentActivity : AppCompatActivity() {
                         }
                     }
                 }
+
         }
 
     }

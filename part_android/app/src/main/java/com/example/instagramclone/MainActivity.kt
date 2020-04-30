@@ -3,14 +3,22 @@ package com.example.instagramclone
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.Image
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.text.isDigitsOnly
+import androidx.core.view.size
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.instagramclone.navigation.*
 import com.google.android.gms.tasks.Task
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -21,23 +29,44 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_alarm.*
+import kotlinx.android.synthetic.main.fragment_detail.*
+import kotlinx.android.synthetic.main.fragment_grid.*
+import kotlinx.android.synthetic.main.fragment_user.*
+import kotlinx.android.synthetic.main.fragment_user.view.*
+import kotlinx.android.synthetic.main.fragment_user.view.account_recyclerview
 import java.util.jar.Manifest
-
-var selectedItem: Int = 0
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     var detailViewFragment: DetailViewFragment? = null
     var gridFragment: GridFragment? = null
     var alarmFragment: AlarmFragment? = null
     var userFragment: UserFragment? = null
+    val fragmentManager = supportFragmentManager
 
-    var fragmentManager: FragmentManager? = null
+    var firestore: FirebaseFirestore? = null
+    var uid: String? = null
+    var auth: FirebaseAuth? = null
+
+    var clickButtonList : ArrayList<Int>? = null
+    companion object {
+        var homeFragmentList: ArrayList<String> = arrayListOf()
+        var searchFragmentList: ArrayList<String> = arrayListOf()
+        var alarmFragmentList: ArrayList<String> = arrayListOf()
+        var accountFragmentList: ArrayList<String> = arrayListOf()
+
+        var selectedItem: Int = 0
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fragmentManager = supportFragmentManager
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        uid = auth?.uid
 
+        clickButtonList = arrayListOf()
         bottom_navigation.setOnNavigationItemSelectedListener(this)
 
         ActivityCompat.requestPermissions(
@@ -47,57 +76,82 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         )
 
         bottom_navigation.selectedItemId = R.id.action_home
-
-
         selectedItem = bottom_navigation.selectedItemId
         // registerPushToken()
 
     }
 
     override fun onBackPressed() {
-        if (selectedItem == R.id.action_home) {
-            moveTaskToBack(true);                        // 태스크를 백그라운드로 이동
-            finishAndRemoveTask();                        // 액티비티 종료 + 태스크 리스트에서 지우기
-            android.os.Process.killProcess(android.os.Process.myPid());
-        } else bottom_navigation.selectedItemId = R.id.action_home
+        when (bottom_navigation.selectedItemId) {
+            R.id.action_home -> {
+                changeFragment(homeFragmentList)
+            }
+            R.id.action_search -> {
+                changeFragment(searchFragmentList)
+            }
+            R.id.action_alarm -> {
+                changeFragment(alarmFragmentList)
+            }
+            R.id.action_account -> {
+                changeFragment(accountFragmentList)
+            }
+        }
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         setToolbarDefault()
-        selectedItem = p0.itemId
+        if(p0.itemId != R.id.action_add_photo) {
+            if (clickButtonList!!.contains(p0.itemId)) {
+                clickButtonList!!.remove(p0.itemId)
+                clickButtonList!!.add(p0.itemId)
+            } else clickButtonList!!.add(p0.itemId)
+
+            for (fragment in fragmentManager.fragments) {
+                if (fragment != null && fragment.isVisible)
+                    fragmentManager.beginTransaction().hide(fragment).commitNow()
+            }
+        }
+
         when (p0.itemId) {
             R.id.action_home -> {
                 if (detailViewFragment == null) {
                     detailViewFragment = DetailViewFragment()
-                    fragmentManager!!.beginTransaction()
-                        .add(R.id.main_content, detailViewFragment!!).commit()
-                }
-                if (gridFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(gridFragment!!).commit()
-                if (alarmFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(alarmFragment!!).commit()
-                if (userFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(userFragment!!).commit()
-                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
-                    .show(detailViewFragment!!).commit()
 
+                    fragmentManager!!.beginTransaction()
+                        .add(R.id.main_content, detailViewFragment!!, "action_home").commitNow()
+                    homeFragmentList.add(detailViewFragment!!.tag!!)
+                }
+
+                if (detailViewFragment != null) {
+                    if(selectedItem == p0.itemId){
+                        deleteFragment(homeFragmentList, detailViewFragment!!)
+                    }
+
+                    fragmentManager.beginTransaction()
+                        .show(fragmentManager.findFragmentByTag(homeFragmentList.last())!!).commitNow()
+                    if(selectedItem == p0.itemId) detailViewFragment!!.detailviewfragment_recyclerview.smoothScrollToPosition(detailViewFragment!!.detailviewfragment_recyclerview.height)
+                }
+                selectedItem = p0.itemId
                 return true
             }
             R.id.action_search -> {
                 if (gridFragment == null) {
                     gridFragment = GridFragment()
-                    fragmentManager!!.beginTransaction().add(R.id.main_content, gridFragment!!)
-                        .commit()
+                    fragmentManager.beginTransaction()
+                        .add(R.id.main_content, gridFragment!!, "action_search")
+                        .commitNow()
+                    searchFragmentList.add(gridFragment!!.tag!!)
                 }
-                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(detailViewFragment!!).commit()
-                if (alarmFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(alarmFragment!!).commit()
-                if (userFragment != null) fragmentManager!!.beginTransaction().hide(userFragment!!)
-                    .commit()
-                if (gridFragment != null) fragmentManager!!.beginTransaction().show(gridFragment!!)
-                    .commit()
 
+                if (gridFragment != null) {
+                    if(selectedItem == p0.itemId){
+                        deleteFragment(searchFragmentList,gridFragment!!)
+                    }
+                    fragmentManager.beginTransaction()
+                        .show(fragmentManager.findFragmentByTag(searchFragmentList.last())!!).commitNow()
+                    if(selectedItem == p0.itemId) gridFragment!!.gridfragment_recyclerview.smoothScrollToPosition(0)
+                }
+                selectedItem = p0.itemId
                 return true
             }
             R.id.action_add_photo -> {
@@ -122,23 +176,27 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         startActivity(Intent(this, AddPhotoActivity::class.java))
                     }
                 }
+
                 return false
             }
-            R.id.action_favorite_alarm -> {
+            R.id.action_alarm -> {
                 if (alarmFragment == null) {
                     alarmFragment = AlarmFragment()
-                    fragmentManager!!.beginTransaction().add(R.id.main_content, alarmFragment!!)
-                        .commit()
+                    fragmentManager.beginTransaction()
+                        .add(R.id.main_content, alarmFragment!!, "favorite_alarm")
+                        .commitNow()
+                    alarmFragmentList.add(alarmFragment!!.tag!!)
                 }
-                if (gridFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(gridFragment!!).commit()
-                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(detailViewFragment!!).commit()
-                if (userFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(userFragment!!).commit()
-                if (alarmFragment != null) fragmentManager!!.beginTransaction()
-                    .show(alarmFragment!!).commit()
 
+                if (alarmFragment != null) {
+                    if(selectedItem == p0.itemId){
+                        deleteFragment(alarmFragmentList,alarmFragment!!)
+                    }
+                    fragmentManager.beginTransaction()
+                        .show(fragmentManager.findFragmentByTag(alarmFragmentList.last())!!).commitNow()
+                    if(selectedItem == p0.itemId) alarmFragment!!.alarmfragment_recyclerview.smoothScrollToPosition(0)
+                }
+                selectedItem = p0.itemId
                 return true
             }
             R.id.action_account -> {
@@ -148,29 +206,54 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     var uid = FirebaseAuth.getInstance().currentUser?.uid
                     bundle.putString("destinationUid", uid)
                     userFragment!!.arguments = bundle
-                    fragmentManager!!.beginTransaction().add(R.id.main_content, userFragment!!)
-                        .commit()
+                    fragmentManager.beginTransaction()
+                        .add(R.id.main_content, userFragment!!, "action_account")
+                        .commitNow()
+                    accountFragmentList.add(userFragment!!.tag!!)
                 }
-                if (gridFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(gridFragment!!).commit()
-                if (alarmFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(alarmFragment!!).commit()
-                if (detailViewFragment != null) fragmentManager!!.beginTransaction()
-                    .hide(detailViewFragment!!).commit()
-                if (userFragment != null) fragmentManager!!.beginTransaction()
-                    .show(userFragment!!).commit()
 
-                // var userFragment = UserFragment()
-                // var bundle = Bundle()
-                // var uid = FirebaseAuth.getInstance().currentUser?.uid
-                // bundle.putString("destinationUid", uid)
-                // userFragment.arguments = bundle
-                // supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment)
-                //     .commit()
+                if (userFragment != null) {
+                    if(selectedItem == p0.itemId){
+                        deleteFragment(accountFragmentList, userFragment!!)
+                    }
+                    fragmentManager.beginTransaction()
+                        .show(fragmentManager.findFragmentByTag(accountFragmentList.last())!!).commitNow()
+                    if(selectedItem == p0.itemId) userFragment!!.account_recyclerview.smoothScrollToPosition(0)
+                }
+                selectedItem = p0.itemId
                 return true
             }
+
         }
         return false
+    }
+
+    fun deleteFragment(arrayList: ArrayList<String>, fragment: Fragment){
+        for(str in arrayList){
+            if(str == arrayList[0]) continue
+            fragmentManager.beginTransaction()
+                .remove(fragmentManager.findFragmentByTag(str)!!).commitNow()
+        }
+        arrayList.clear()
+        arrayList.add(fragment!!.tag!!)
+    }
+
+    fun changeFragment(arrayList: ArrayList<String>){
+        if (arrayList.size <= 1) {
+            clickButtonList!!.remove(clickButtonList!!.last())
+            if(clickButtonList!!.last() != null) bottom_navigation.selectedItemId = clickButtonList!!.last()
+            else{
+            moveTaskToBack(true);                        // 태스크를 백그라운드로 이동
+            finishAndRemoveTask();                        // 액티비티 종료 + 태스크 리스트에서 지우기
+            android.os.Process.killProcess(android.os.Process.myPid());
+            }
+            return
+        }
+        fragmentManager.beginTransaction()
+            .remove(fragmentManager.findFragmentByTag(arrayList.last())!!).commitNow()
+        arrayList.remove(arrayList.last())
+        if (arrayList.size > 0) fragmentManager.beginTransaction()
+            .show(fragmentManager.findFragmentByTag(arrayList.last())!!).commitNow()
     }
 
     fun setToolbarDefault() {
@@ -198,7 +281,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             var uid = FirebaseAuth.getInstance()?.uid
             var storageRef =
                 FirebaseStorage.getInstance().reference.child("userProfileImages").child(uid!!)
-            storageRef.putFile(imageUri!!).continueWithTask { task: Task<UploadTask.TaskSnapshot> ->
+            storageRef.putFile(imageUri!!).continueWithTask {
                 return@continueWithTask storageRef.downloadUrl
             }.addOnSuccessListener { uri ->
                 var map = HashMap<String, Any>()

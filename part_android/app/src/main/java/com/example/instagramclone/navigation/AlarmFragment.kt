@@ -9,10 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.instagramclone.MainActivity
 import com.example.instagramclone.R
 import com.example.instagramclone.navigation.model.AlarmDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
 import kotlinx.android.synthetic.main.item_comment.view.*
 
@@ -70,6 +72,16 @@ class AlarmFragment : Fragment() {
                             .into(view.commentviewitem_imageview_profile)
                     }
                 }
+            view.commentviewitem_imageview_profile.setOnClickListener{
+                var fragment = UserFragment()
+                var bundle = Bundle()
+                bundle.putString("destinationUid", alarmDTOList[position].uid)
+                bundle.putString("userId", alarmDTOList[position].userId)
+                fragment.arguments = bundle
+
+                changeFragment(fragment)
+                addToList(fragment)
+            }
             when (alarmDTOList[position].kind) {
                 0 -> {
                     val str = alarmDTOList[position].userId + "님이 회원님의 게시물을 좋아합니다"
@@ -86,6 +98,61 @@ class AlarmFragment : Fragment() {
                 }
             }
             view.commentviewitem_textview_comment.visibility = View.INVISIBLE
+
+
+        }
+        fun changeFragment(fragment: Fragment){
+            for (fragment in activity!!.supportFragmentManager.fragments) {
+                if (fragment != null && fragment.isVisible) {
+                    activity?.supportFragmentManager
+                        ?.beginTransaction()
+                        ?.hide(fragment)
+                        ?.commitNow()
+                }
+            }
+            when (activity!!.bottom_navigation.selectedItemId) {
+                R.id.action_home -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        MainActivity.homeFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_search -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        MainActivity.searchFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_alarm -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        MainActivity.alarmFragmentList.size.toString()
+                    )?.commitNow()
+                }
+                R.id.action_account -> {
+                    activity?.supportFragmentManager?.beginTransaction()?.add(
+                        R.id.main_content, fragment,
+                        MainActivity.accountFragmentList.size.toString()
+                    )?.commitNow()
+                }
+            }
+        }
+
+        fun addToList(fragment: Fragment) {
+            when (activity!!.bottom_navigation.selectedItemId) {
+                R.id.action_home -> {
+                    MainActivity.homeFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_search -> {
+                    MainActivity.searchFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_alarm -> {
+                    MainActivity.alarmFragmentList.add(fragment.tag!!)
+                }
+                R.id.action_account -> {
+                    MainActivity.accountFragmentList.add(fragment.tag!!)
+                }
+            }
         }
 
     }
