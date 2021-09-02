@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:id="@+id/detailviewitem_profile"
@@ -48,6 +48,11 @@
             android:layout_height="35dp">
         </ImageView>
     </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
     <TextView
         android:id="@+id/detailviewitem_favoritecounter_textview"
         android:text="like 0"
@@ -66,6 +71,6 @@
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp">
     </TextView>
-
+    </LinearLayout>
 
 </LinearLayout>

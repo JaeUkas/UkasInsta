@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -30,6 +31,8 @@ class GridFragment : Fragment() {
         firestore = FirebaseFirestore.getInstance()
         fragmentView?.gridfragment_recyclerview?.adapter = GridFragmentRecyclerViewAdapter()
         fragmentView?.gridfragment_recyclerview?.layoutManager = GridLayoutManager(activity, 3)
+
+
 
         fragmentView?.searchfragment_swipe?.setOnRefreshListener {
             fragmentView?.searchfragment_swipe?.isRefreshing = false
@@ -72,7 +75,7 @@ class GridFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var imageview = (holder as CustomViewHolder).imageview
             Glide.with(holder.imageview.context)
-                .load(contentDTOs[itemCount - position - 1].imageUrl)
+                .load(contentDTOs[position].imageUrl)
                 .apply(RequestOptions().centerCrop()).into(imageview)
         } // center crop : 이미지 중앙으로 받도록
 
