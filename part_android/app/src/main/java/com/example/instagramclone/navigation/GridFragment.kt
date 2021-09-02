@@ -75,7 +75,7 @@ class GridFragment : Fragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             var imageview = (holder as CustomViewHolder).imageview
             Glide.with(holder.imageview.context)
-                .load(contentDTOs[position].imageUrl)
+                .load(contentDTOs[itemCount - position - 1].imageUrl)
                 .apply(RequestOptions().centerCrop()).into(imageview)
         } // center crop : 이미지 중앙으로 받도록
 
